@@ -1,10 +1,15 @@
 import { PollGrid } from '@/components/polls/poll-grid'
 import { CreatePollButton } from '@/components/polls/create-poll-button'
 import { PollFilters } from '@/components/polls/poll-filters'
+import { UserProfile } from '@/components/auth/user-profile'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
-export default function PollsPage() {
+export default async function PollsPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
@@ -13,11 +18,23 @@ export default function PollsPage() {
           <p className="text-muted-foreground">
             Discover and participate in interesting polls
           </p>
+          {user && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Welcome back, {user.user_metadata?.full_name || user.email}
+            </p>
+          )}
         </div>
-        <div className="flex gap-2">
-          <Link href="/polls/create">
-            <Button>Create Poll</Button>
-          </Link>
+        <div className="flex gap-2 items-center">
+          {user ? (
+            <>
+              <Link href="/polls/create">
+                <Button>Create Poll</Button>
+              </Link>
+              <UserProfile />
+            </>
+          ) : (
+            <UserProfile />
+          )}
         </div>
       </div>
 
