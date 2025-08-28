@@ -17,12 +17,14 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
+  const [showSuccessDetails, setShowSuccessDetails] = useState(false)
   const { signUp, isLoading, error, clearError } = useAuthActions()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     clearError()
     setSuccess(null)
+    setShowSuccessDetails(false)
 
     if (!fullName || !email || !password || !confirmPassword) {
       return
@@ -39,7 +41,8 @@ export function RegisterForm() {
     const result = await signUp(email, password, fullName)
 
     if (result.success && result.requiresConfirmation) {
-      setSuccess(result.message || 'Please check your email to confirm your account.')
+      setSuccess('Account created successfully!')
+      setShowSuccessDetails(true)
     }
   }
 
@@ -56,10 +59,37 @@ export function RegisterForm() {
       )}
 
       {success && (
-        <Alert>
-          <CheckCircle className="h-4 w-4" />
-          <AlertDescription>{success}</AlertDescription>
+        <Alert className="border-green-200 bg-green-50">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">
+            <div className="space-y-2">
+              <p className="font-medium">{success}</p>
+              {showSuccessDetails && (
+                <div className="text-sm space-y-1">
+                  <p>📧 Please check your email inbox for a verification link.</p>
+                  <p className="text-gray-600">
+                    We sent a confirmation email to <strong>{email}</strong>
+                  </p>
+                  <p className="text-gray-600">
+                    Click the link in the email to verify your account, then return here to sign in.
+                  </p>
+                </div>
+              )}
+            </div>
+          </AlertDescription>
         </Alert>
+      )}
+
+      {/* Show login redirect after successful registration */}
+      {showSuccessDetails && (
+        <div className="text-center">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Go to Sign In Page
+          </Link>
+        </div>
       )}
 
       <div className="space-y-2">

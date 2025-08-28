@@ -1,23 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAuthActions } from '@/lib/hooks/use-auth-actions'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react'
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null)
   const { signIn, isLoading, error, clearError } = useAuthActions()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Check if user was redirected from email confirmation
+    const confirmed = searchParams.get('confirmed')
+    const message = searchParams.get('message')
+    
+    if (confirmed === 'true') {
+      setConfirmationMessage('✅ Email confirmed successfully! You can now sign in.')
+    } else if (message) {
+      setConfirmationMessage(decodeURIComponent(message))
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     clearError()
+    setConfirmationMessage(null)
 
     if (!email || !password) {
       return
@@ -28,10 +44,32 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {confirmationMessage && (
+        <Alert className="border-green-200 bg-green-50">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">
+            {confirmationMessage}
+          </AlertDescription>
+        </Alert>
+      )}
+
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>
+            {error}
+            {error.includes('Email not confirmed') && (
+              <div className="mt-2 text-sm">
+                <p>Please check your email and click the confirmation link.</p>
+                <p className="text-gray-600">
+                  Can't find the email? Check your spam folder or{' '}
+                  <Link href="/resend-confirmation" className="underline hover:text-red-600">
+                    resend confirmation
+                  </Link>
+                </p>
+              </div>
+            )}
+          </AlertDescription>
         </Alert>
       )}
 

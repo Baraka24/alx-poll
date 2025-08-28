@@ -26,10 +26,10 @@ export function UserProfile() {
     return (
       <div className="flex gap-2">
         <Link href="/login">
-          <Button variant="outline">Sign In</Button>
+          <Button variant="outline" size="sm">Sign In</Button>
         </Link>
         <Link href="/register">
-          <Button>Sign Up</Button>
+          <Button size="sm">Sign Up</Button>
         </Link>
       </div>
     )
