@@ -18,7 +18,9 @@ export function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [showSuccessDetails, setShowSuccessDetails] = useState(false)
-  const { signUp, isLoading, error, clearError } = useAuthActions()
+  const [registeredEmail, setRegisteredEmail] = useState('')
+  const [registeredPassword, setRegisteredPassword] = useState('')
+  const { signUp, signIn, isLoading, error, clearError } = useAuthActions()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +45,23 @@ export function RegisterForm() {
     if (result.success && result.requiresConfirmation) {
       setSuccess('Account created successfully!')
       setShowSuccessDetails(true)
+      // Store credentials for immediate login after email confirmation
+      setRegisteredEmail(email)
+      setRegisteredPassword(password)
+    } else if (result.success && !result.requiresConfirmation) {
+      // Account created and immediately logged in
+      setSuccess('Account created and signed in successfully!')
+    }
+  }
+
+  const handleDirectLogin = async () => {
+    if (!registeredEmail || !registeredPassword) return
+
+    clearError()
+    const loginResult = await signIn(registeredEmail, registeredPassword)
+
+    if (loginResult.success) {
+      // User will be automatically redirected by the signIn function
     }
   }
 
@@ -82,13 +101,26 @@ export function RegisterForm() {
 
       {/* Show login redirect after successful registration */}
       {showSuccessDetails && (
-        <div className="text-center">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Go to Sign In Page
-          </Link>
+        <div className="text-center space-y-3">
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+            >
+              Go to Sign In Page
+            </Link>
+            <Button
+              type="button"
+              onClick={handleDirectLogin}
+              disabled={isLoading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              {isLoading ? 'Signing in...' : 'Sign In Now'}
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500">
+            "Sign In Now" will work once you've verified your email
+          </p>
         </div>
       )}
 
@@ -194,21 +226,25 @@ export function RegisterForm() {
           !password ||
           !confirmPassword ||
           !passwordsMatch ||
-          !passwordValid
+          !passwordValid ||
+          showSuccessDetails
         }
       >
         {isLoading ? 'Creating account...' : 'Create Account'}
       </Button>
 
-      <div className="text-center text-sm">
-        <span className="text-muted-foreground">Already have an account? </span>
-        <Link
-          href="/login"
-          className="font-medium text-primary hover:underline"
-        >
-          Sign in
-        </Link>
-      </div>
+      {/* Show alternative login option if account creation is pending email verification */}
+      {!showSuccessDetails && (
+        <div className="text-center text-sm">
+          <span className="text-muted-foreground">Already have an account? </span>
+          <Link
+            href="/login"
+            className="font-medium text-primary hover:underline"
+          >
+            Sign in
+          </Link>
+        </div>
+      )}
     </form>
   )
 }
