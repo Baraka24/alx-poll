@@ -22,7 +22,7 @@ export function LoginForm() {
     // Check if user was redirected from email confirmation
     const confirmed = searchParams.get('confirmed')
     const message = searchParams.get('message')
-    
+
     if (confirmed === 'true') {
       setConfirmationMessage('✅ Email confirmed successfully! You can now sign in.')
     } else if (message) {

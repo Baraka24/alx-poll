@@ -51,7 +51,7 @@ export default function ResendConfirmationPage() {
           <h1 className="text-3xl font-bold text-gray-900">ALX Poll</h1>
           <p className="text-gray-600 mt-2">Resend email confirmation</p>
         </div>
-        
+
         <Card className="shadow-lg border-0">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center flex items-center justify-center gap-2">
@@ -76,7 +76,7 @@ export default function ResendConfirmationPage() {
                     </div>
                   </AlertDescription>
                 </Alert>
-                
+
                 <div className="text-center">
                   <Link
                     href="/login"
@@ -117,7 +117,7 @@ export default function ResendConfirmationPage() {
                 </Button>
               </form>
             )}
-            
+
             <div className="text-center mt-6">
               <Link
                 href="/login"

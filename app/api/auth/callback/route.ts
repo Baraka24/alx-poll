@@ -14,10 +14,10 @@ export async function GET(request: NextRequest) {
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
-      
+
       // Determine redirect URL based on confirmation type
       let redirectUrl = next
-      
+
       if (type === 'signup') {
         // Redirect to login with confirmation message for email verification
         redirectUrl = '/login?confirmed=true&message=' + encodeURIComponent('Email confirmed successfully! You can now sign in.')
@@ -32,10 +32,10 @@ export async function GET(request: NextRequest) {
       }
     } else {
       // Handle email confirmation errors
-      const errorMessage = error.message.includes('already been confirmed') 
-        ? 'Email already confirmed. Please sign in.' 
+      const errorMessage = error.message.includes('already been confirmed')
+        ? 'Email already confirmed. Please sign in.'
         : 'Email confirmation failed. Please try again.'
-      
+
       return NextResponse.redirect(
         `${origin}/login?confirmed=false&message=${encodeURIComponent(errorMessage)}`
       )
