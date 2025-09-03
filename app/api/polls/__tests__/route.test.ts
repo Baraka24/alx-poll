@@ -26,7 +26,7 @@ describe('/api/polls API Route Integration Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     mockSupabaseClient = {
       auth: {
         getUser: jest.fn(),
@@ -43,7 +43,7 @@ describe('/api/polls API Route Integration Tests', () => {
         single: jest.fn().mockReturnThis(),
       })),
     }
-    
+
     mockCreateClient.mockResolvedValue(mockSupabaseClient)
     mockJson.mockImplementation((data, options) => ({
       json: data,
@@ -63,7 +63,7 @@ describe('/api/polls API Route Integration Tests', () => {
           created_at: '2024-01-01T00:00:00Z',
         },
         {
-          id: '2', 
+          id: '2',
           title: 'Test Poll 2',
           description: 'Test Description 2',
           creator_id: 'user2',
@@ -156,7 +156,7 @@ describe('/api/polls API Route Integration Tests', () => {
 
     it('should filter polls by user ID when authenticated', async () => {
       const userId = 'user123'
-      
+
       mockSupabaseClient.auth.getUser.mockResolvedValue({
         data: { user: { id: userId } },
       })
@@ -184,9 +184,9 @@ describe('/api/polls API Route Integration Tests', () => {
       const mockQuery = {
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
-        order: jest.fn().mockResolvedValue({ 
-          data: null, 
-          error: { message: 'Database connection failed' } 
+        order: jest.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'Database connection failed' }
         }),
       }
 
@@ -321,9 +321,9 @@ describe('/api/polls API Route Integration Tests', () => {
       const mockQuery = {
         insert: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ 
-          data: null, 
-          error: { message: 'Database constraint violation' } 
+        single: jest.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'Database constraint violation' }
         }),
       }
 

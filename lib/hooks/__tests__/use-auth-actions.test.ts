@@ -22,7 +22,7 @@ describe('useAuthActions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     mockSupabaseClient = {
       auth: {
         signInWithPassword: jest.fn(),
@@ -31,7 +31,7 @@ describe('useAuthActions', () => {
         resetPasswordForEmail: jest.fn(),
       },
     }
-    
+
     mockCreateClient.mockReturnValue(mockSupabaseClient)
   })
 
@@ -39,7 +39,7 @@ describe('useAuthActions', () => {
     it('should successfully sign in a user', async () => {
       const mockUser = { id: '123', email: 'test@example.com' }
       const mockSession = { access_token: 'token' }
-      
+
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
         data: { user: mockUser, session: mockSession },
         error: null,
@@ -61,7 +61,7 @@ describe('useAuthActions', () => {
 
     it('should handle sign in errors', async () => {
       const mockError = { message: 'Invalid credentials' }
-      
+
       mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
         data: { user: null, session: null },
         error: mockError,
@@ -127,7 +127,7 @@ describe('useAuthActions', () => {
     it('should successfully sign up a user without email confirmation', async () => {
       const mockUser = { id: '123', email: 'test@example.com' }
       const mockSession = { access_token: 'token' }
-      
+
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: mockUser, session: mockSession },
         error: null,
@@ -157,7 +157,7 @@ describe('useAuthActions', () => {
 
     it('should handle sign up requiring email confirmation', async () => {
       const mockUser = { id: '123', email: 'test@example.com' }
-      
+
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: mockUser, session: null },
         error: null,
@@ -178,7 +178,7 @@ describe('useAuthActions', () => {
 
     it('should handle sign up errors', async () => {
       const mockError = { message: 'Email already registered' }
-      
+
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: null, session: null },
         error: mockError,
@@ -199,7 +199,7 @@ describe('useAuthActions', () => {
     it('should handle missing full name', async () => {
       const mockUser = { id: '123', email: 'test@example.com' }
       const mockSession = { access_token: 'token' }
-      
+
       mockSupabaseClient.auth.signUp.mockResolvedValue({
         data: { user: mockUser, session: mockSession },
         error: null,
@@ -244,7 +244,7 @@ describe('useAuthActions', () => {
 
     it('should handle sign out errors', async () => {
       const mockError = { message: 'Sign out failed' }
-      
+
       mockSupabaseClient.auth.signOut.mockResolvedValue({
         error: mockError,
       })
@@ -294,7 +294,7 @@ describe('useAuthActions', () => {
 
     it('should handle password reset errors', async () => {
       const mockError = { message: 'Email not found' }
-      
+
       mockSupabaseClient.auth.resetPasswordForEmail.mockResolvedValue({
         error: mockError,
       })

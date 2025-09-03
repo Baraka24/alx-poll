@@ -22,7 +22,7 @@ describe('RegisterForm Integration Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     mockUseAuthActions.mockReturnValue({
       signUp: mockSignUp,
       signIn: mockSignIn,
@@ -51,7 +51,7 @@ describe('RegisterForm Integration Tests', () => {
       render(<RegisterForm />)
 
       const passwordInput = screen.getByLabelText(/^password$/i)
-      
+
       await user.type(passwordInput, '123')
       await user.tab() // Blur the input
 
@@ -66,7 +66,7 @@ describe('RegisterForm Integration Tests', () => {
 
       const passwordInput = screen.getByLabelText(/^password$/i)
       const confirmPasswordInput = screen.getByLabelText(/confirm password/i)
-      
+
       await user.type(passwordInput, 'password123')
       await user.type(confirmPasswordInput, 'different123')
       await user.tab()
@@ -86,7 +86,7 @@ describe('RegisterForm Integration Tests', () => {
       // Fill in partial form
       await user.type(screen.getByLabelText(/full name/i), 'John Doe')
       await user.type(screen.getByLabelText(/email/i), 'john@example.com')
-      
+
       expect(submitButton).toBeDisabled()
 
       // Complete form with valid data
@@ -118,7 +118,7 @@ describe('RegisterForm Integration Tests', () => {
   describe('Form Submission - Success Cases', () => {
     it('should handle successful registration requiring email confirmation', async () => {
       const user = userEvent.setup()
-      
+
       mockSignUp.mockResolvedValue({
         success: true,
         requiresConfirmation: true
@@ -149,7 +149,7 @@ describe('RegisterForm Integration Tests', () => {
 
     it('should handle successful registration with immediate login', async () => {
       const user = userEvent.setup()
-      
+
       mockSignUp.mockResolvedValue({
         success: true,
         requiresConfirmation: false
@@ -171,12 +171,12 @@ describe('RegisterForm Integration Tests', () => {
 
     it('should allow direct login after registration', async () => {
       const user = userEvent.setup()
-      
+
       mockSignUp.mockResolvedValue({
         success: true,
         requiresConfirmation: true
       })
-      
+
       mockSignIn.mockResolvedValue({
         success: true
       })
@@ -206,7 +206,7 @@ describe('RegisterForm Integration Tests', () => {
   describe('Form Submission - Error Cases', () => {
     it('should display registration errors', async () => {
       const user = userEvent.setup()
-      
+
       mockSignUp.mockResolvedValue({
         success: false,
         error: 'Email already registered'
@@ -228,12 +228,12 @@ describe('RegisterForm Integration Tests', () => {
 
     it('should handle direct login failure', async () => {
       const user = userEvent.setup()
-      
+
       mockSignUp.mockResolvedValue({
         success: true,
         requiresConfirmation: true
       })
-      
+
       mockSignIn.mockResolvedValue({
         success: false,
         error: 'Email not confirmed'
@@ -282,7 +282,7 @@ describe('RegisterForm Integration Tests', () => {
   describe('Loading States', () => {
     it('should show loading state during registration', async () => {
       const user = userEvent.setup()
-      
+
       mockUseAuthActions.mockReturnValue({
         signUp: mockSignUp,
         signIn: mockSignIn,
@@ -301,7 +301,7 @@ describe('RegisterForm Integration Tests', () => {
 
     it('should show loading state during direct login', async () => {
       const user = userEvent.setup()
-      
+
       // First render with normal state
       const { rerender } = render(<RegisterForm />)
 
@@ -341,7 +341,7 @@ describe('RegisterForm Integration Tests', () => {
   describe('Error Clearing', () => {
     it('should clear errors on new form submission', async () => {
       const user = userEvent.setup()
-      
+
       mockUseAuthActions.mockReturnValue({
         signUp: mockSignUp,
         signIn: mockSignIn,

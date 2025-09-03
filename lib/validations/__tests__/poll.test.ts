@@ -1,9 +1,9 @@
-import { 
-  pollOptionSchema, 
-  createPollSchema, 
+import {
+  pollOptionSchema,
+  createPollSchema,
   voteSchema,
   type CreatePollData,
-  type VoteData 
+  type VoteData
 } from '@/lib/validations/poll'
 
 describe('Poll Validation Schemas', () => {
