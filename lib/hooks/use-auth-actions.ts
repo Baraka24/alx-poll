@@ -154,11 +154,46 @@ export function useAuthActions() {
     }
   }
 
+  const generateMagicLink = async (email: string) => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const response = await fetch('/api/auth/magic-link/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        setError(result.error || 'Failed to generate magic link')
+        return { success: false, error: result.error || 'Failed to generate magic link' }
+      }
+
+      return {
+        success: true,
+        token: result.token,
+        qrCode: result.qrCode,
+        magicLinkUrl: result.magicLinkUrl,
+        expiresAt: result.expiresAt,
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'An unexpected error occurred'
+      setError(message)
+      return { success: false, error: message }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return {
     signIn,
     signUp,
     signOut,
     resetPassword,
+    generateMagicLink,
     isLoading,
     error,
     clearError: () => setError(null),

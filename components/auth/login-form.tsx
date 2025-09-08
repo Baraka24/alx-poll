@@ -22,13 +22,22 @@ export function LoginForm() {
     // Check if user was redirected from email confirmation
     const confirmed = searchParams.get('confirmed')
     const message = searchParams.get('message')
+    const magicLinkSent = searchParams.get('magic_link_sent')
+    const emailParam = searchParams.get('email')
+
+    // Pre-fill email if provided in URL
+    if (emailParam && !email) {
+      setEmail(decodeURIComponent(emailParam))
+    }
 
     if (confirmed === 'true') {
       setConfirmationMessage('✅ Email confirmed successfully! You can now sign in.')
+    } else if (magicLinkSent) {
+      setConfirmationMessage(`🪄 Magic link email sent to ${decodeURIComponent(magicLinkSent)}! Please check your email to complete login.`)
     } else if (message) {
       setConfirmationMessage(decodeURIComponent(message))
     }
-  }, [searchParams])
+  }, [searchParams, email])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

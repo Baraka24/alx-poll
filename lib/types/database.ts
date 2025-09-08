@@ -122,6 +122,35 @@ export interface Database {
           created_at?: string
         }
       }
+      magic_links: {
+        Row: {
+          id: string
+          token: string
+          email: string
+          expires_at: string
+          used_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          token: string
+          email: string
+          expires_at: string
+          used_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          token?: string
+          email?: string
+          expires_at?: string
+          used_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -142,3 +171,4 @@ export interface Database {
 export type Poll = Database['public']['Tables']['polls']['Row']
 export type Vote = Database['public']['Tables']['votes']['Row']
 export type Profile = Database['public']['Tables']['profiles']['Row']
+export type MagicLink = Database['public']['Tables']['magic_links']['Row']

@@ -1,7 +1,9 @@
 import { LoginForm } from '@/components/auth/login-form'
+import { MagicLinkLogin } from '@/components/auth/magic-link-login'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function LoginPage() {
   return (
@@ -12,19 +14,36 @@ export default function LoginPage() {
           <p className="text-gray-600 mt-2">Create and share interactive polls</p>
         </div>
 
-        <Card className="shadow-lg border-0">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-            <CardDescription className="text-center">
-              Sign in to your account to continue
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<div>Loading...</div>}>
-              <LoginForm />
-            </Suspense>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          <Tabs defaultValue="traditional" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="traditional">Email & Password</TabsTrigger>
+              <TabsTrigger value="magic-link">Magic Link</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="traditional">
+              <Card className="shadow-lg border-0">
+                <CardHeader className="space-y-1">
+                  <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
+                  <CardDescription className="text-center">
+                    Sign in to your account to continue
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <LoginForm />
+                  </Suspense>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="magic-link">
+              <div className="flex justify-center">
+                <MagicLinkLogin />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
 
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">

@@ -244,6 +244,56 @@ export const validateInput = (data: any): { valid: boolean; errors?: string[] } 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined }
 }
 
+// Apply security middleware for API routes
+export const applySecurityMiddleware = async (
+  request: NextRequest,
+  options: {
+    rateLimitKey?: string
+    maxRequests?: number
+    windowMs?: number
+    maxRequestSize?: number
+    requireCSRF?: boolean
+  } = {}
+): Promise<{ allowed: boolean; reason?: string; user?: any }> => {
+  try {
+    // Validate request size
+    if (options.maxRequestSize) {
+      const contentLength = request.headers.get('content-length')
+      if (contentLength && parseInt(contentLength) > options.maxRequestSize) {
+        return { allowed: false, reason: 'Request payload too large' }
+      }
+    }
+
+    // CSRF protection
+    if (options.requireCSRF && !validateCSRF(request)) {
+      return { allowed: false, reason: 'CSRF validation failed' }
+    }
+
+    // Rate limiting
+    if (options.rateLimitKey && options.maxRequests && options.windowMs) {
+      const ip = getClientIP(request)
+      const key = `${options.rateLimitKey}:${ip}`
+      const now = Date.now()
+
+      const entry = rateLimitStore.get(key)
+
+      if (!entry || now > entry.resetTime) {
+        rateLimitStore.set(key, { count: 1, resetTime: now + options.windowMs })
+      } else {
+        entry.count++
+        if (entry.count > options.maxRequests) {
+          return { allowed: false, reason: 'Too many requests' }
+        }
+      }
+    }
+
+    return { allowed: true }
+  } catch (error) {
+    console.error('Security middleware error:', error)
+    return { allowed: false, reason: 'Security check failed' }
+  }
+}
+
 // Security middleware wrapper
 export const withSecurity = (
   handler: (request: NextRequest, context: any) => Promise<NextResponse>,
