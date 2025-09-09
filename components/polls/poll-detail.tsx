@@ -2,85 +2,104 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, User, Clock } from 'lucide-react'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Calendar, User, Clock, Loader2, AlertCircle } from 'lucide-react'
+import { usePoll, usePollVotes } from '@/lib/hooks/use-polls'
 
 interface PollDetailProps {
-  poll?: {
-    id: string
-    title: string
-    description: string
-    author: string
-    createdAt: string
-    endDate?: string
-    status: 'active' | 'closed' | 'draft'
-    totalVotes: number
-  }
+  pollId: string
 }
 
-export function PollDetail({ poll }: PollDetailProps) {
-  // Mock data for development
-  const mockPoll = {
-    id: '1',
-    title: 'What should we have for lunch?',
-    description: 'Help us decide what to order for the team lunch this Friday. We want to make sure everyone gets something they enjoy!',
-    author: 'John Doe',
-    createdAt: '2025-08-20',
-    endDate: '2025-08-30',
-    status: 'active' as const,
-    totalVotes: 42
+export function PollDetail({ pollId }: PollDetailProps) {
+  const { data: poll, isLoading, error } = usePoll(pollId)
+  const { data: votes } = usePollVotes(pollId)
+
+  const getStatusColor = (isExpired: boolean) => {
+    return isExpired 
+      ? 'bg-red-100 text-red-800'
+      : 'bg-green-100 text-green-800'
   }
 
-  const currentPoll = poll || mockPoll
+  const getStatusText = (isExpired: boolean) => {
+    return isExpired ? 'Closed' : 'Active'
+  }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800'
-      case 'closed':
-        return 'bg-red-100 text-red-800'
-      case 'draft':
-        return 'bg-gray-100 text-gray-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
+  const isPollExpired = poll?.expires_at ? new Date(poll.expires_at) <= new Date() : false
+  const totalVotes = votes?.length || 0
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span className="ml-2">Loading poll details...</span>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error || !poll) {
+    return (
+      <Card>
+        <CardContent className="py-6">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Failed to load poll details. Please try again later.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl">{currentPoll.title}</CardTitle>
-          <Badge className={getStatusColor(currentPoll.status)}>
-            {currentPoll.status.charAt(0).toUpperCase() + currentPoll.status.slice(1)}
+          <CardTitle className="text-2xl">{poll.title}</CardTitle>
+          <Badge className={getStatusColor(isPollExpired)}>
+            {getStatusText(isPollExpired)}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <p className="text-gray-600 leading-relaxed">
-          {currentPoll.description}
-        </p>
+        {poll.description && (
+          <p className="text-gray-600 leading-relaxed">
+            {poll.description}
+          </p>
+        )}
 
         <div className="flex flex-wrap gap-4 text-sm text-gray-500">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span>Created by {currentPoll.author}</span>
+            <span>Created by Poll Creator</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            <span>Created on {new Date(currentPoll.createdAt).toLocaleDateString()}</span>
+            <span>Created on {new Date(poll.created_at).toLocaleDateString()}</span>
           </div>
-          {currentPoll.endDate && (
+          {poll.expires_at && (
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Ends on {new Date(currentPoll.endDate).toLocaleDateString()}</span>
+              <span>
+                {isPollExpired ? 'Ended' : 'Ends'} on {new Date(poll.expires_at).toLocaleDateString()}
+              </span>
             </div>
           )}
         </div>
 
         <div className="pt-4 border-t">
-          <p className="text-sm text-gray-500">
-            <strong>{currentPoll.totalVotes}</strong> total votes
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              <strong>{totalVotes}</strong> total votes
+            </p>
+            {poll.allows_multiple_votes && (
+              <Badge variant="outline" className="text-xs">
+                Multiple votes allowed
+              </Badge>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
