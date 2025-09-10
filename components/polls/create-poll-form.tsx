@@ -16,7 +16,7 @@ export function CreatePollForm() {
   const { user } = useAuth()
   const router = useRouter()
   const createPollMutation = useCreatePoll()
-  
+
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [options, setOptions] = useState([
@@ -43,7 +43,7 @@ export function CreatePollForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!user) return
 
     const validOptions = options.filter(o => o.text.trim())
@@ -60,7 +60,7 @@ export function CreatePollForm() {
         isPublic,
         allowsMultipleVotes,
       })
-      
+
       router.push(`/polls/${poll.id}`)
     } catch (error) {
       console.error('Error creating poll:', error)
@@ -128,7 +128,7 @@ export function CreatePollForm() {
                 )}
               </div>
             ))}
-            
+
             {options.length < 10 && (
               <Button
                 type="button"

@@ -20,7 +20,7 @@ export default function LoginPage() {
               <TabsTrigger value="traditional">Email & Password</TabsTrigger>
               <TabsTrigger value="magic-link">Magic Link</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="traditional">
               <Card className="shadow-lg border-0">
                 <CardHeader className="space-y-1">
@@ -36,7 +36,7 @@ export default function LoginPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="magic-link">
               <div className="flex justify-center">
                 <MagicLinkLogin />

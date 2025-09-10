@@ -28,7 +28,7 @@ LANGUAGE plpgsql
 SECURITY definer
 AS $$
 BEGIN
-  DELETE FROM magic_links 
+  DELETE FROM magic_links
   WHERE expires_at < NOW() - interval '1 hour';
 END;
 $$;

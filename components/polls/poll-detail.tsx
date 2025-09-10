@@ -15,7 +15,7 @@ export function PollDetail({ pollId }: PollDetailProps) {
   const { data: votes } = usePollVotes(pollId)
 
   const getStatusColor = (isExpired: boolean) => {
-    return isExpired 
+    return isExpired
       ? 'bg-red-100 text-red-800'
       : 'bg-green-100 text-green-800'
   }

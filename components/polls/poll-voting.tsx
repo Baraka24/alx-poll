@@ -25,7 +25,7 @@ export function PollVoting({ pollId }: PollVotingProps) {
   const { data: poll, isLoading: pollLoading, error: pollError } = usePoll(pollId)
   const { data: votes, isLoading: votesLoading } = usePollVotes(pollId)
   const voteMutation = useVote()
-  
+
   const [selectedOptions, setSelectedOptions] = useState<number[]>([])
   const [userHasVoted, setUserHasVoted] = useState(false)
   const [userVoteOptions, setUserVoteOptions] = useState<number[]>([])
@@ -48,13 +48,13 @@ export function PollVoting({ pollId }: PollVotingProps) {
 
   // Calculate vote statistics
   const voteStats = poll?.options ? (poll.options as PollOption[]).map((option: PollOption) => {
-    const optionVotes = votes?.filter(vote => 
+    const optionVotes = votes?.filter(vote =>
       vote.option_ids.includes(option.id)
     ).length || 0
-    
+
     const totalVotes = votes?.length || 0
     const percentage = totalVotes > 0 ? (optionVotes / totalVotes) * 100 : 0
-    
+
     return {
       ...option,
       votes: optionVotes,
@@ -85,7 +85,7 @@ export function PollVoting({ pollId }: PollVotingProps) {
         pollId,
         optionIds: selectedOptions
       })
-      
+
       // For single-vote polls, mark as voted and show the vote
       if (!poll?.allows_multiple_votes) {
         setUserHasVoted(true)
@@ -94,7 +94,7 @@ export function PollVoting({ pollId }: PollVotingProps) {
         // For multiple-vote polls, add to existing votes but allow more voting
         setUserVoteOptions(prev => [...prev, ...selectedOptions])
       }
-      
+
       setSelectedOptions([])
     } catch (error) {
       console.error('Error submitting vote:', error)
@@ -198,8 +198,8 @@ export function PollVoting({ pollId }: PollVotingProps) {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              {voteMutation.error instanceof Error 
-                ? voteMutation.error.message 
+              {voteMutation.error instanceof Error
+                ? voteMutation.error.message
                 : 'Failed to submit vote. Please try again.'}
             </AlertDescription>
           </Alert>
