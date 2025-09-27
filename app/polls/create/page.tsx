@@ -20,17 +20,9 @@ export default function CreatePollPage() {
         </p>
       </div>
 
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <CardTitle>Poll Details</CardTitle>
-          <CardDescription>
-            Fill in the information below to create your poll
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <CreatePollForm />
-        </CardContent>
-      </Card>
+      <div className="max-w-2xl">
+        <CreatePollForm />
+      </div>
     </div>
   )
 }

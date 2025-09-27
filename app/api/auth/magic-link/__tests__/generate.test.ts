@@ -26,7 +26,7 @@ describe('/api/auth/magic-link/generate', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     // Mock Supabase client
     mockSupabase = {
       auth: {

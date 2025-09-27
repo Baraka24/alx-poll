@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const validatedData = generateMagicLinkSchema.parse(body)
-    
+
     const supabase = await createClient()
 
     // Send magic link using Supabase's built-in OTP
@@ -39,14 +39,14 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Failed to send magic link:', error)
-      
+
       if (error.message.includes('User not found')) {
         return NextResponse.json(
           { error: 'User not found. Please register first or use email/password login.' },
           { status: 404 }
         )
       }
-      
+
       return NextResponse.json(
         { error: 'Failed to send magic link' },
         { status: 500 }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Magic link generation error:', error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid input', details: error.issues },

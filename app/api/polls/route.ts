@@ -18,11 +18,13 @@ async function getPolls(request: NextRequest) {
 
     // Validate and sanitize query parameters
     const queryParams = {
-      userId: searchParams.get('userId'),
-      search: searchParams.get('search'),
-      status: searchParams.get('status'),
-      page: parseInt(searchParams.get('page') || '1'),
-      limit: parseInt(searchParams.get('limit') || '20'),
+      search: searchParams.get('search') || undefined,
+      status: searchParams.get('status') || 'all',
+      createdBy: searchParams.get('createdBy') || undefined,
+      page: Math.max(1, parseInt(searchParams.get('page') || '1')),
+      limit: Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20'))),
+      sortBy: searchParams.get('sortBy') || 'created_at',
+      sortOrder: searchParams.get('sortOrder') || 'desc',
     }
 
     // Validate input parameters
@@ -37,8 +39,9 @@ async function getPolls(request: NextRequest) {
     // Validate with schema
     const filterValidation = validatePollFilter(queryParams)
     if (!filterValidation.success) {
+      console.error('Filter validation error:', filterValidation.error)
       return NextResponse.json(
-        { error: 'Invalid filter parameters' },
+        { error: 'Invalid filter parameters', details: filterValidation.error.issues },
         { status: 400, headers: securityHeaders }
       )
     }
